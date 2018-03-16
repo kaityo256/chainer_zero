@@ -1,14 +1,14 @@
-import chainer
-import numpy as np
-from chainer import training
-from chainer.training import extensions
 import random
 import collections
+import chainer
+from chainer import training
+from chainer.training import extensions
+import numpy as np
 from data import Data
 from model import Model
 
 def main(f_on, f_off):
-    data = Data.load_data(f_on,f_off)
+    data = Data.load_data(f_on, f_off)
     random.seed(1)
     np.random.seed(1)
     random.shuffle(data)
@@ -36,13 +36,13 @@ def main(f_on, f_off):
     test_iter = chainer.iterators.SerialIterator(test, batchsize, repeat=False, shuffle=False)
     updater = training.StandardUpdater(train_iter, optimizer, device=gpu)
     trainer = training.Trainer(updater, (epoch, 'epoch'), out='result')
-    trainer.extend(extensions.Evaluator(test_iter, model,device=gpu))
+    trainer.extend(extensions.Evaluator(test_iter, model, device=gpu))
     trainer.extend(extensions.dump_graph('main/loss'))
     trainer.extend(extensions.snapshot(), trigger=(epoch, 'epoch'))
     trainer.extend(extensions.LogReport())
     trainer.extend(extensions.PrintReport(
-                ['epoch', 'main/loss', 'validation/main/loss',
-                'main/accuracy', 'validation/main/accuracy']))
+        ['epoch', 'main/loss', 'validation/main/loss',
+         'main/accuracy', 'validation/main/accuracy']))
     trainer.extend(extensions.ProgressBar())
 
     # Training
@@ -52,5 +52,4 @@ def main(f_on, f_off):
     m.save('test.model')
 
 if __name__ == '__main__':
-    main("on.txt","off.txt")
-
+    main("on.txt", "off.txt")
