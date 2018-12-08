@@ -8,12 +8,12 @@ Jananese/ [English](README.md)
 
 ## 使い方
 
-    $ ruby makedata.rb  # 学習用データセット作成
-    $ python train.py   # 学習 (test.modelが保存される)
-    $ python test.py    # 学習できたか確認
-    $ python export.py  # C++用にモデルをエクスポート
-    $ make              # C++コードのコンパイル
-    $ ./a.out           # モデルをインポートして確認
+    ruby makedata.rb  # 学習用データセット作成
+    python train.py   # 学習 (test.modelが保存される)
+    python test.py    # 学習できたか確認
+    python export.py  # C++用にモデルをエクスポート
+    make              # C++コードのコンパイル
+    ./a.out           # モデルをインポートして確認
 
 ## データセット
 

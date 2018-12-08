@@ -1,11 +1,17 @@
-import random
 import collections
+import random
+
 import chainer
 from chainer import training
 from chainer.training import extensions
-import numpy as np
+
 from data import Data
 from model import Model
+
+epoch = 200
+batchsize = 100
+gpu = -1
+
 
 def main(f_on, f_off):
     data = Data.load_data(f_on, f_off)
@@ -13,17 +19,8 @@ def main(f_on, f_off):
     np.random.seed(1)
     random.shuffle(data)
     dataset = Data.make_dataset(data)
-    epoch = 200
-    batchsize = 100
-    units = len(data[0][0])
-    m = Model(units)
+    m = Model(len(data[0][0]))
     model = m.get_model()
-    gpu = -1
-
-    # for GPU
-    if gpu >= 0:
-        chainer.cuda.get_device(0).use()
-        model.to_gpu()
 
     optimizer = chainer.optimizers.Adam()
     #optimizer = chainer.optimizers.SGD()
@@ -33,7 +30,8 @@ def main(f_on, f_off):
     test = dataset[:nt]
     train = dataset[nt:]
     train_iter = chainer.iterators.SerialIterator(train, batchsize)
-    test_iter = chainer.iterators.SerialIterator(test, batchsize, repeat=False, shuffle=False)
+    test_iter = chainer.iterators.SerialIterator(
+        test, batchsize, repeat=False, shuffle=False)
     updater = training.StandardUpdater(train_iter, optimizer, device=gpu)
     trainer = training.Trainer(updater, (epoch, 'epoch'), out='result')
     trainer.extend(extensions.Evaluator(test_iter, model, device=gpu))
@@ -47,9 +45,8 @@ def main(f_on, f_off):
 
     # Training
     trainer.run()
-    if gpu >= 0:
-        model.to_cpu()
     m.save('test.model')
+
 
 if __name__ == '__main__':
     main("on.txt", "off.txt")
